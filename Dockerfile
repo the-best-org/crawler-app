@@ -10,7 +10,6 @@ FROM python:3.6-alpine
 # ENV EXCLUDE_URLS $EXCLUDEURLS
 # ENV URL $URL
 
-
 COPY . /app
 WORKDIR /app
 
