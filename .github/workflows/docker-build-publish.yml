@@ -22,7 +22,7 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: asazanoff/crawler
   USERNAME: asazanoff
-
+  TEST_TAG: test
 
 jobs:
   build:
@@ -83,6 +83,7 @@ jobs:
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         id: build-and-push
+        if: ${{ github.event_name != 'pull_request' }}
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
           context: .
@@ -92,6 +93,32 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Build Test image
+        id: build-test-image
+        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          context: .
+          load: true
+          file: ./Dockerfile-test
+          tags: ${{ env.TEST_TAG }}
+      
+      - name: Test image
+        id: test-image
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          docker run --rm ${{ env.TEST_TAG }} \
+          -e MONGO=${{ vars.MONGOADDRESS }} \
+          -e MONGO_PORT=${{ vars.MONGOPORT }} \
+          -e RMQ_HOST=${{ vars.RABBITHOST }} \
+          -e RMQ_QUEUE=${{ secrets.RABBITQUEUE }} \
+          -e RMQ_USERNAME=${{ secrets.RABBITUSERNAME }} \
+          -e RMQ_PASSWORD=${{ secrets.RABBITPASSWORD }} \
+          -e CHECK_INTERVAL=${{ vars.CHECKINTERVAL }} \
+          -e EXCLUDE_URLS=${{ vars.EXCLUDEURLS }} \
+          -e URL=${{ vars.URL}} \
+          /bin/sh ./test.sh
+      
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
       #  is public to avoid leaking data.  If you would like to publish
