@@ -1,7 +1,7 @@
 FROM python:3.6-alpine
 
 ENV MONGO $MONGOADDRESS
-ENV MONGO_PORT $MONGOADDRESS
+ENV MONGO_PORT $MONGOPORT
 ENV RMQ_HOST $RABBITHOST
 ENV RMQ_QUEUE $RABBITQUEUE
 ENV RMQ_USERNAME $RABBITUSERNAME
@@ -15,4 +15,4 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt -r requirements-test.txt
 
-CMD python3 -u crawler/crawler.py $URL
+ENTRYPOINT [ "/bin/sh", "test.sh" ]

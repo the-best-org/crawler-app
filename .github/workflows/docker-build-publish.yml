@@ -105,7 +105,17 @@ jobs:
       - name: Test image
         id: test-image
         run: |
-          docker run --rm ${{ env.TEST_TAG }} /bin/sh ./test.sh
+          docker run --rm ${{ env.TEST_TAG }} \
+          -e MONGO=${{ env.MONGOADDRESS }} \
+          -e MONGO_PORT=${{ env.MONGOPORT }} \
+          -e RMQ_HOST=${{ env.RABBITHOST }} \
+          -e RMQ_QUEUE=${{ secrets.RABBITQUEUE }} \
+          -e RMQ_USERNAME=${{ secrets.RABBITUSERNAME }} \
+          -e RMQ_PASSWORD=${{ secrets.RABBITPASSWORD }} \
+          -e CHECK_INTERVAL=${{ env.CHECKINTERVAL }} \
+          -e EXCLUDE_URLS=${{ env.EXCLUDEURLS }} \
+          -e URL=${{ env.URL}} \
+          /bin/sh ./test.sh
       
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
