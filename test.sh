@@ -2,7 +2,7 @@
 
 echo "--- Running tests ---"
 
-if python -m unittest discover -s tests/ | grep OK
+if python -m unittest discover -s tests/ | grep -q OK
 then 
     echo "--- Tests runned ---"
 else
@@ -12,7 +12,7 @@ fi
 
 echo "--- Generating report ---"
 
-if coverage run -m unittest discover -s tests/ | grep OK
+if coverage run -m unittest discover -s tests/ | grep -q OK
 then 
     echo "App covered with tests"
 else
