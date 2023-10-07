@@ -100,7 +100,7 @@ jobs:
           context: .
           load: true
           file: ./Dockerfile-test
-          tags: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.TEST_TAG }}
       
       - name: Test image
         id: test-image
