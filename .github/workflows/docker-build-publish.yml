@@ -106,7 +106,7 @@ jobs:
         id: test-image
         run: |
           docker run --rm ${{ env.TEST_TAG }} \
-          -e MONGO=$MONGOADDRESS \
+          -e MONGO=${{ vars.MONGOADDRESS }} \
           -e MONGO_PORT=${{ vars.MONGOPORT }} \
           -e RMQ_HOST=${{ vars.RABBITHOST }} \
           -e RMQ_QUEUE=${{ secrets.RABBITQUEUE }} \
